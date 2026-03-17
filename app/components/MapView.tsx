@@ -45,6 +45,13 @@ const SITES = [
   },
 ];
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+declare global {
+  interface Window {
+    L: any;
+  }
+}
+
 export default function MapView() {
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -58,7 +65,14 @@ export default function MapView() {
       document.head.appendChild(link);
     }
 
+    const existingScript = document.getElementById("leaflet-js");
+    if (existingScript) {
+      initMap();
+      return;
+    }
+
     const script = document.createElement("script");
+    script.id = "leaflet-js";
     script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
     script.onload = () => initMap();
     document.head.appendChild(script);
@@ -70,7 +84,7 @@ export default function MapView() {
   }, []);
 
   function initMap() {
-    const L = (window as any).L;
+    const L = window.L;
     if (!L) return;
 
     const mapEl = document.getElementById("leaflet-map");
